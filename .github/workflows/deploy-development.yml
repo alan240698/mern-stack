@@ -13,23 +13,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Bước 1: Checkout mã nguồn từ repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Docker
+      # Bước 2: Cài đặt Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      # Bước 3: Cài đặt Docker Compose
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version  # Kiểm tra Docker Compose đã được cài đặt
+
+      # Bước 4: Xây dựng và chạy Docker containers cho môi trường Development
       - name: Build and run Docker containers for Development
         run: |
-          docker-compose -f docker-compose.yml up --build -d  # Xây dựng và chạy Docker Compose cho môi trường development
+          docker-compose -f docker-compose-development.yml up --build -d  # Xây dựng và chạy Docker Compose cho môi trường Development
 
+      # Bước 5: Chạy các bài kiểm tra (unit tests)
       - name: Run tests
         run: |
           docker exec -t backend yarn test  # Chạy kiểm tra trong container backend
 
+      # Bước 6: Dừng các Docker containers sau khi hoàn thành
       - name: Stop Docker containers
-        run: docker-compose down  # Dừng các container sau khi hoàn thành
+        run: docker-compose down  # Dừng và xóa các container sau khi hoàn thành
 
+      # Bước 7: Triển khai (Deploy) lên môi trường Development
       - name: Deploy to Development
         run: |
           echo "Deploying to Development environment"

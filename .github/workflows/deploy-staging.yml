@@ -31,7 +31,7 @@ jobs:
       # Bước 4: Xây dựng và chạy Docker containers cho môi trường Staging
       - name: Build and run Docker containers for Staging
         run: |
-          docker-compose -f docker-compose.yml up --build -d  # Xây dựng và chạy Docker Compose cho môi trường Staging
+          docker-compose -f docker-compose-staging.yml up --build -d  # Xây dựng và chạy Docker Compose cho môi trường Staging
 
       # Bước 5: Chạy các bài kiểm tra (unit tests)
       - name: Run tests

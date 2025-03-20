@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - '3000:3000'
+    environment:
+      - MONGO_URL=${MONGO_URL}   # Truyền MONGO_URL từ GitHub Secrets
+      - REDIS_URL=${REDIS_URL}   # Truyền REDIS_URL từ GitHub Secrets
+      - DEV_API_KEY=${DEV_API_KEY}  # Truyền DEV_API_KEY từ GitHub Secrets
+    depends_on:
+      - mongodb
+      - redis
+    command: ["yarn", "start:prod"]  # Sử dụng lệnh production cho backend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - '3001:3001'
+    depends_on:
+      - backend
+
+  mongodb:
+    image: mongo
+    container_name: mongo_db
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongo_db:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.4.2
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "127.0.0.1:6379:6379"  # Chỉ mở Redis cho localhost để tránh tấn công
+    volumes:
+      - redis_data:/data
+      - ./backend/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}  # Truyền REDIS_PASSWORD từ GitHub Secrets
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "strongpassword", "ping"]
+      interval: 10s
+      retries: 3
+      start_period: 5s
+
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis_insight
+    restart: always
+    ports:
+      - "8001:8001"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - redis_insight_data:/db
+    command: >
+      bash -c "sysctl -w net.core.somaxconn=1024 && /entrypoint.sh"
+
+volumes:
+  mongo_data:
+  redis_data:
+  redis_insight_data:

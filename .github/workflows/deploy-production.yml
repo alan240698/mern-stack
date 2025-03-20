@@ -31,7 +31,7 @@ jobs:
       # Bước 4: Xây dựng và chạy Docker containers cho môi trường Production
       - name: Build and run Docker containers for Production
         run: |
-          docker-compose -f docker-compose.yml up --build -d  # Xây dựng và chạy Docker Compose cho môi trường Production
+          docker-compose -f docker-compose-production.yml up --build -d  # Xây dựng và chạy Docker Compose cho môi trường Production
 
       # Bước 5: Chạy các bài kiểm tra (unit tests)
       - name: Run tests
