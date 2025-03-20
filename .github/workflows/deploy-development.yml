@@ -1,0 +1,39 @@
+name: Deploy to Development
+
+on:
+  push:
+    branches:
+      - develop  # Chạy workflow khi có thay đổi trên nhánh `develop`
+  pull_request:
+    branches:
+      - develop  # Chạy workflow khi có PR từ bất kỳ nhánh nào vào nhánh `develop`
+
+jobs:
+  deploy_development:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and run Docker containers for Development
+        run: |
+          docker-compose -f docker-compose.yml up --build -d  # Xây dựng và chạy Docker Compose cho môi trường development
+
+      - name: Run tests
+        run: |
+          docker exec -t backend yarn test  # Chạy kiểm tra trong container backend
+
+      - name: Stop Docker containers
+        run: docker-compose down  # Dừng các container sau khi hoàn thành
+
+      - name: Deploy to Development
+        run: |
+          echo "Deploying to Development environment"
+        env:
+          DEV_API_KEY: ${{ secrets.DEV_API_KEY }}  # Sử dụng DEV_API_KEY từ GitHub Secrets
+          MONGO_URL: ${{ secrets.MONGO_URL }}      # Sử dụng MONGO_URL từ GitHub Secrets
+          REDIS_URL: ${{ secrets.REDIS_URL }}      # Sử dụng REDIS_URL từ GitHub Secrets

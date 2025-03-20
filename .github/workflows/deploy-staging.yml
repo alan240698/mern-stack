@@ -1,0 +1,39 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - staging  # Chạy workflow khi có thay đổi trên nhánh `staging`
+  pull_request:
+    branches:
+      - staging  # Chạy workflow khi có PR từ bất kỳ nhánh nào vào nhánh `staging`
+
+jobs:
+  deploy_staging:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and run Docker containers for Staging
+        run: |
+          docker-compose -f docker-compose.yml up --build -d  # Xây dựng và chạy Docker Compose cho môi trường staging
+
+      - name: Run tests
+        run: |
+          docker exec -t backend yarn test  # Chạy kiểm tra trong container backend
+
+      - name: Stop Docker containers
+        run: docker-compose down  # Dừng các container sau khi hoàn thành
+
+      - name: Deploy to Staging
+        run: |
+          echo "Deploying to Staging environment"
+        env:
+          STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}  # Sử dụng STAGING_API_KEY từ GitHub Secrets
+          MONGO_URL: ${{ secrets.MONGO_URL }}              # Sử dụng MONGO_URL từ GitHub Secrets
+          REDIS_URL: ${{ secrets.REDIS_URL }}              # Sử dụng REDIS_URL từ GitHub Secrets
