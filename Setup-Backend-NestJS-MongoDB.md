@@ -2,7 +2,7 @@
 
 ---
 
-### Setting up NextJS Backend
+### Setting up NestJS Backend
 
 _Note:_
 
@@ -27,7 +27,8 @@ yarn add @nestjs/mongoose mongoose @nestjs/cache-manager cache-manager cache-man
 
 ```plaintext
 PORT=3000
-MONGO_URL=mongodb://localhost:27017/mern-beyond
+#MONGO_URL=mongodb://localhost:27017/mern-beyond  (Lưu ý nếu không dùng docker thì là localhost)
+MONGO_URL=mongodb://mongo_db:27017/mern-beyond (Dùng docker thì thay localhost với container_name)
 REDIS_HOST=localhost
 REDIS_PORT=6379
 CACHE_TTL=10
@@ -39,10 +40,10 @@ CACHE_TTL=10
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DemoModule } from './demo/demo.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CacheConfigModule } from './cache/cache.module';
+import { DemoModule } from './demo/demo.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { CacheConfigModule } from './cache/cache.module';
       isGlobal: true,
       envFilePath: ['.env.development.local'],
     }),
+    CacheConfigModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -60,9 +62,7 @@ import { CacheConfigModule } from './cache/cache.module';
     DemoModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-  ],
+  providers: [AppService],
 })
 export class AppModule {}
 ```
@@ -77,7 +77,6 @@ nest generate service cache
 **Update the** `src/cache/cache.service.ts` **file as follows:**
 
 ```plaintext
-// cache.service.ts
 import { Injectable, Inject } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -95,9 +94,9 @@ export class CacheService {
 
   }
 
-  async set(key: string, value: any, options?: object): Promise<void> {
+  async set(key: string, value: any): Promise<void> {
     try {
-      return await this.cacheManager.set(key, value, options);
+      return await this.cacheManager.set(key, value);
     } catch (e) {
       console.log(e);
     }
@@ -328,7 +327,7 @@ export class DemoService {
 **update - demo.module.ts**
 
 ```plaintext
-import { Module} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DemoService } from './demo.service';
 import { DemoController } from './demo.controller';
@@ -346,7 +345,7 @@ import { CacheConfigModule } from 'src/cache/cache.module';
 export class DemoModule {}
 ```
 
-**update - dto/create-demo.dto.ts**
+**dto/create-demo.dto.ts**
 
 ```plaintext
 import { ApiProperty } from '@nestjs/swagger';
