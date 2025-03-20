@@ -175,6 +175,8 @@ Lets install and integrate **swagger** to make our api testing easier:
 
 ```plaintext
 yarn add swagger-ui-express @nestjs/swagger class-validator
+yarn add @nestjs/common@^11.0.0 @nestjs/swagger@^11.0.0
+yarn add tsconfig-paths --dev
 ```
 
 **Update** `main.ts` **as follows:**

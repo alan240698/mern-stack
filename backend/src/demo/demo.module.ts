@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DemoService } from './demo.service';
 import { DemoController } from './demo.controller';
 import { Demo, DemoSchema } from './schemas/demo.schema';
-import { CacheConfigModule } from 'src/cache/cache.module';
+import { CacheConfigModule } from '../cache/cache.module';
 
 @Module({
   imports: [
