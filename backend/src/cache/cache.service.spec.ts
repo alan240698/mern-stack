@@ -1,21 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CacheService } from './cache.service';
-import { CacheModule } from '@nestjs/cache-manager';  // Import CacheModule từ NestJS Cache
+import { CacheModule, CACHE_MANAGER } from '@nestjs/cache-manager';
+import * as cacheManager from 'cache-manager';
 
 describe('CacheService', () => {
   let service: CacheService;
 
   beforeEach(async () => {
-    // Import CacheModule vào TestModule để cung cấp CACHE_MANAGER
     const module: TestingModule = await Test.createTestingModule({
-      imports: [CacheModule],  // Import CacheModule để cung cấp CACHE_MANAGER
+      imports: [
+        CacheModule.register({
+          store: cacheManager,
+            ttl: 10,  // Thời gian tồn tại của cache
+            max: 100, // Số lượng tối đa của cache
+          }),
+      ],
       providers: [CacheService],
     }).compile();
 
-    service = module.get<CacheService>(CacheService);  // Get CacheService
+    service = module.get<CacheService>(CacheService);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();  // Kiểm tra CacheService đã được khởi tạo đúng
+    expect(service).toBeDefined();
   });
 });
