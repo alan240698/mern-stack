@@ -40,7 +40,7 @@ jobs:
 
       # Bước 6: Dừng các Docker containers sau khi hoàn thành
       - name: Stop Docker containers
-        run: docker-compose down  # Dừng và xóa các container sau khi hoàn thành
+        run: docker-compose -f docker-compose-production.yml down  # Dừng và xóa các container sau khi hoàn thành
 
       # Bước 7: Triển khai (Deploy) lên môi trường Production
       - name: Deploy to Production
