@@ -5,33 +5,33 @@ import { Demo } from './schemas/demo.schema';
 import { CacheService } from '../cache/cache.service'; // Adjust path if necessary
 
 describe('DemoService', () => {
-  let service: DemoService;
+    let service: DemoService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        DemoService,
-        {
-          provide: getModelToken(Demo.name),
-          useValue: {
-            find: jest.fn(),
-            save: jest.fn(),
-          },
-        },
-        {
-          provide: CacheService,
-          useValue: {
-            get: jest.fn().mockResolvedValue(null),
-            set: jest.fn().mockResolvedValue(undefined),
-          },
-        },
-      ],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [
+                DemoService,
+                {
+                    provide: getModelToken(Demo.name),
+                    useValue: {
+                        find: jest.fn(),
+                        save: jest.fn(),
+                    },
+                },
+                {
+                    provide: CacheService,
+                    useValue: {
+                        get: jest.fn().mockResolvedValue(null),
+                        set: jest.fn().mockResolvedValue(undefined),
+                    },
+                },
+            ],
+        }).compile();
 
-    service = module.get<DemoService>(DemoService);
-  });
+        service = module.get<DemoService>(DemoService);
+    });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(service).toBeDefined();
+    });
 });

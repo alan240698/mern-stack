@@ -6,11 +6,11 @@ import { Demo, DemoSchema } from './schemas/demo.schema';
 import { CacheConfigModule } from '../cache/cache.module';
 
 @Module({
-  imports: [
-    CacheConfigModule,
-    MongooseModule.forFeature([{ name: Demo.name, schema: DemoSchema }]),
-  ],
-  controllers: [DemoController],
-  providers: [DemoService],
+    imports: [
+        CacheConfigModule,
+        MongooseModule.forFeature([{ name: Demo.name, schema: DemoSchema }]), // Register Schema
+    ],
+    controllers: [DemoController],
+    providers: [DemoService],
 })
 export class DemoModule {}
