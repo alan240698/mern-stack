@@ -1,11 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Injectable } from '@nestjs/common';
 import { CreateDemoDto } from './dto/create-demo.dto';
 import { UpdateDemoDto } from './dto/update-demo.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Demo } from './schemas/demo.schema';
-import { Cache } from 'cache-manager';
 import { CacheService } from '../cache/cache.service';
 
 @Injectable()
