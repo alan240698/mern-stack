@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { CacheModule, CacheInterceptor } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheService } from './cache.service';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
     imports: [
